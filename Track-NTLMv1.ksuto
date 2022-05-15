@@ -1,0 +1,10 @@
+// Track the use of NTLMv1
+IdentityLogonEvents
+| where Timestamp > ago (10d) // shows the activies in the recent days
+| where Application contains "directory"
+| where Protocol == "Ntlm"
+| extend AddData = todynamic(AdditionalFields)
+| extend NTLMV1 = tostring(AddData.IsNtlmV1)
+| extend Account = tostring((AddData).["ACTOR.ACCOUNT"])
+| where NTLMV1 == "True"
+//| summarize count() by Account, AccountSid, DC = DestinationDeviceName // Optional - Summarize the relevant entities 
