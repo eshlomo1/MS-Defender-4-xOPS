@@ -1,0 +1,6 @@
+// onboarded devices
+DeviceInfo
+| where Timestamp > ago(3d)
+| where OSPlatform == @"Linux"
+| summarize arg_max(Timestamp, *) by DeviceId
+| distinct Timestamp, DeviceName, DeviceId, OSPlatform, OSDistribution, OSVersion, ReportId
