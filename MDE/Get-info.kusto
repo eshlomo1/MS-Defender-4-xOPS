@@ -1,0 +1,9 @@
+// Get information for network-related events
+DeviceInfo
+| where Timestamp > ago(1d)
+| summarize by DeviceId
+| join kind=inner (
+DeviceNetworkEvents
+| where Timestamp > ago(1d)
+) on DeviceId
+| take 10
