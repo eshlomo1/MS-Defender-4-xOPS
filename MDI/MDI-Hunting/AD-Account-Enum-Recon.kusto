@@ -1,0 +1,12 @@
+// Search for Account enumeration reconnaissance on AD
+let TimeRange = 10d;
+AlertInfo
+| where Timestamp > ago(TimeRange)
+| where ServiceSource == "Microsoft Defender for Identity"
+| where Title contains "Account enumeration reconnaissance"
+| join (AlertEvidence
+| where Timestamp > ago(TimeRange)
+| where EntityType == "Machine"
+| where EvidenceDirection == "Source"
+) on AlertId
+| summarize by AlertId, DeviceName, Timestamp, AttackTechniques, ProcessCommandLine
