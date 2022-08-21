@@ -1,0 +1,10 @@
+// Find Evidence by Machine and Count by Risk
+AlertEvidence 
+| where Timestamp > ago(5d) 
+| join kind=rightsemi AlertEvidence on AlertId 
+| where EntityType == 'Machine' 
+| join kind=leftouter ( 
+    DeviceInfo 
+    | summarize DeviceName = any(DeviceName) by DeviceId 
+) on DeviceId 
+| summarize dcount(AlertId) by DeviceName , bin(Timestamp, 1d)
