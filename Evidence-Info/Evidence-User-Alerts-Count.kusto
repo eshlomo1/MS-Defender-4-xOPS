@@ -1,0 +1,6 @@
+// Find Alert by User and Count by Alerts
+AlertEvidence 
+| where Timestamp > ago(5d) and EntityType == "User" 
+| summarize Alerts = dcount(AlertId) by AccountObjectId, AccountName , AccountDomain 
+| project Alerts, AccountDomain, AccountName, AccountObjectId 
+| order by Alerts desc 
