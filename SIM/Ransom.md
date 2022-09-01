@@ -24,3 +24,5 @@ Ransomware is a piece of software that generally implements the following techni
 [RansomSIM Tool - Ransomware simulation](https://github.com/eshlomo1/MS-Defender-4-xOPS/tree/main/SIM/Ransom)
 
 ![](https://github.com/eshlomo1/MS-Defender-4-xOPS/blob/main/SIM/Ransom.png)
+
+Note: The ransomware simulator tools are PowerShell based, and more is to come in other languages.
