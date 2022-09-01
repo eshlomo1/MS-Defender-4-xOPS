@@ -3,7 +3,7 @@
 This script is intended to be used to test your defenses and backups against ransomware in a controlled environment. 
 You can encrypt fake data for your simulation, but you also have the option to decrypt the files with the same script if you need to.
  
-## Ransomware building blocks
+## Ransomware Building Blocks
 
 Ransomware is a piece of software that generally implements the following techniques in order:
 
@@ -16,9 +16,9 @@ Ransomware is a piece of software that generally implements the following techni
 7. Deletes existing backups to hinder recovery.
 8. Enumerates existing files by iterating over all discovered resources, encrypting every file the author deemed relevant. Sometimes, based on specific extensions, some folders are excluded, and sometimes only specific folders are encrypted. 
 9. Optional - send original file content before the encryption for an increased ransom potential.
-10. Opens a C2 channel and sends a message to the attacker with the host details & encryption key 
+10. Opens a C2 channel and sends a message to the attacker with the host details & encryption key. 
 11. Drops a visible ransom note. 
-12. Optional - modifying browser homepage, desktop wallpaper, and more
+12. Optional - modifying browser homepage, desktop wallpaper, and more.
 
 ### Ransomware Simulation 
 [RansomSIM Tool - Ransomware simulation](https://github.com/eshlomo1/MS-Defender-4-xOPS/tree/main/SIM/Ransom)
