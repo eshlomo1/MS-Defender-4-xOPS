@@ -19,3 +19,5 @@ Ransomware is a piece of software that generally implements the following techni
 10. Opens a C2 channel and sends a message to the attacker with the host details & encryption key 
 11. Drops a visible ransom note. 
 12. Optional - modifying browser homepage, desktop wallpaper, and more
+
+![](https://github.com/eshlomo1/MS-Defender-4-xOPS/blob/main/SIM/Ransom.png)
