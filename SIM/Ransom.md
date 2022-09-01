@@ -20,4 +20,7 @@ Ransomware is a piece of software that generally implements the following techni
 11. Drops a visible ransom note. 
 12. Optional - modifying browser homepage, desktop wallpaper, and more
 
+### Ransomware Simulation 
+[RansomSIM - Ransomware simulation.](https://github.com/eshlomo1/MS-Defender-4-xOPS/tree/main/SIM/Ransom)
+
 ![](https://github.com/eshlomo1/MS-Defender-4-xOPS/blob/main/SIM/Ransom.png)
