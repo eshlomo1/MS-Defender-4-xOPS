@@ -8,15 +8,18 @@
     your simulation, but you also have the option to decrypt the files with the same script if you need to.
 
 .EXAMPLE
-    .\RansomSim.ps1 -Mode encrypt or .\RansomSim.ps1 -Mode decrypt
+    .\RansomSim.ps1 -mode encrypt -Key Q5KyUru6wn82hlY9k8xUjJOPIC9da41jgRkpt21jo2L= 
+    .\RansomSim.ps1 -mode encrypt or decrypt
 
 .INSTRUCTIONS
     Make sure to copy both files (RansomSim and FileCryptography) to the same folder 
     Change the TargetPath and the Extension
     Make sure the key is Q5KyUru6wn82hlY9k8xUjJOPIC9da41jgRkpt21jo2L=
 
-    Run .\RansomSim.ps1 -mode encrypt -Key Q5KyUru6wn82hlY9k8xUjJOPIC9da41jgRkpt21jo2L= 
-    Run .\RansomSim.ps1 -mode encrypt or decrypt
+.NOTES
+    If you need to create files for testing puropse you run the command below    
+    1..5000 | foreach {New-Item -Path C:\temp\$_.docx}
+
 #>
 
 ##### ----------------------------------------------------------------------------------------------------------------------
