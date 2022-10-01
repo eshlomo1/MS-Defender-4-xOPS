@@ -1,0 +1,7 @@
+// List of Devices by Service Account
+IdentityLogonEvents
+| where Timestamp >= ago(30d)
+| where Application == "Active Directory"
+| where AccountUpn == "services@misconfig.lab" 
+| where ActionType == "LogonSuccess"
+| summarize count() by DeviceName
