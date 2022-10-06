@@ -1,0 +1,16 @@
+// MDE Under the Hood
+// Suspicious Driver Load with Time conditions and Prevalence 
+DeviceEvents
+| where ActionType == "DriverLoad"
+| where Timestamp >= ago(31d)
+| distinct SHA1 // Get Drivers SHA1
+| join kind=inner
+    (
+    DeviceFileCertificateInfo // Get the files having certificate older than todatetime or CertificateExpirationTime
+    | where CertificateCreationTime < todatetime("7/30/2020") or CertificateExpirationTime < todatetime("7/30/2020")
+    ) on SHA1 // Use prevalence when malicious driver has been installed 
+    | summarize dcount(DeviceId) by SHA1
+    | where dcount_DeviceId <= 1 
+    | invoke FileProfile(SHA1,1000) // Get file profile 
+    | where GlobalPrevalence <= 300 // Filter out the files having Global Prevalence 
+    | join DeviceFileCertificateInfo on SHA1 // Get certificate details back
