@@ -1,0 +1,7 @@
+// MDI Under the Hood
+// Potential NTLM Relay Attack - Detects NTLM authentication traffic from machine accounts
+let DCS = dynamic(["dc1.lab.local","dc2.lab.local"]);
+DeviceLogonEvents
+| where Protocol == "NTLM"
+| where AccountName endswith "$"
+| where DCS has replace_string(AccountName,"$","")
