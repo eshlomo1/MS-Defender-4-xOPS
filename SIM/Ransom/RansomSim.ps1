@@ -17,7 +17,7 @@
     Make sure the key is Q5KyUru6wn82hlY9k8xUjJOPIC9da41jgRkpt21jo2L=
 
 .NOTES
-    If you need to create files for testing puropse you run the command below    
+    If you need to create files for testing puropse you can run the following command
     1..5000 | foreach {New-Item -Path C:\temp\$_.docx}
 
 #>
