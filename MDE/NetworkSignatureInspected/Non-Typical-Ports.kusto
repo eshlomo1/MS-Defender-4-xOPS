@@ -1,0 +1,16 @@
+// Network events that occurred on non-typical ports
+DeviceNetworkEvents 
+| where ActionType == "NetworkSignatureInspected" 
+| where Timestamp > ago(15d)
+| extend json = parse_json(AdditionalFields)
+| project LocalIP,LocalPort,RemoteIP,RemotePort,
+    SignatureName = tostring(json.SignatureName),
+    SignatureMatchedContent = tostring(json.SignatureMatchedContent),
+    SamplePacketContent = tostring(json.SamplePacketContent)
+|where (SignatureName == "SMB_Client" 
+    and LocalPort !in(445,139) 
+    and RemotePort !in(445,139)) 
+    or (SignatureName == "DNS_Request" 
+    and LocalPort !in(53,137,5353,5355) 
+    and RemotePort !in(53,137,5353,5355))
+| project Timestamp, DeviceName, ActionType,SigName, RemoteIP, RemotePort
