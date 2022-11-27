@@ -6,3 +6,11 @@ IdentityLogonEvents
 | where FailureReason == "UnknownUser"
 | extend TO_DEVICE = tostring(AdditionalFields.["TO.DEVICE"])
 | summarize count() by bin(Timestamp,10m), Application,ActionType, LogonType, FailureReason, DeviceName, TO_DEVICE 
+
+--------------------------------
+
+IdentityLogonEvents 
+| where Timestamp > ago(1d)
+| where ActionType == "LogonFailed"
+| where FailureReason == "UnknownUser"
+| where AccountName !endswith "$"
