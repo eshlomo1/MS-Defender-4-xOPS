@@ -1,0 +1,8 @@
+// Unknown User with failed logon from unknown device
+// T1087.002 Account Discovery: Domain Account - https://attack.mitre.org/techniques/T1087/002/
+IdentityLogonEvents
+| where Timestamp > ago(1d)
+| where LogonType == "Failed logon"
+| where FailureReason == "UnknownUser"
+| extend TO_DEVICE = tostring(AdditionalFields.["TO.DEVICE"])
+| summarize count() by bin(Timestamp,10m), Application,ActionType, LogonType, FailureReason, DeviceName, TO_DEVICE 
