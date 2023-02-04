@@ -1,5 +1,5 @@
 // Processes who executed LDAP auth with cleartext for the last 31d
-// Mixed two tables - IdentityLogonEvents & DeviceNetworkEvents
+// Combined the tables - IdentityLogonEvents & DeviceNetworkEvents
 IdentityLogonEvents
 | where TimeGenerated > ago(31d) 
 | where LogonType == "LDAP cleartext" 
