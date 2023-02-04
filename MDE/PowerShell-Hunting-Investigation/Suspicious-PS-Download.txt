@@ -1,0 +1,12 @@
+// This query looks for multiple indicators of potentially malicious activity, including suspicious commands, process names, and file extensions.
+// The code includes new variable suspicious file extensions that hold a list of potentially malicious file extensions such as ".ps1", ".exe," ".vbs," and ".js."
+// The where clause includes a condition that checks if the InitiatingProcessFileName ends with one of the extensions in the suspicious file extensions list.
+// This query is best for hunting/investigation and not for detection rules
+let suspiciousCommands = dynamic(["iex", "New-Object", "Start-Process", "Invoke-Expression", "Invoke-Command", "Invoke-Item"]);
+let suspiciousProcesses = dynamic(["powershell.exe", "cmd.exe"]);
+let suspiciousFileExtensions = dynamic([".ps1", ".exe", ".vbs", ".js"]);
+DeviceEvents
+| where InitiatingProcessCommandLine has_any (suspiciousCommands) 
+    or InitiatingProcessFileName in (suspiciousProcesses)
+    or (InitiatingProcessFileName endswith (suspiciousFileExtensions))
+| project Timestamp,DeviceName,ActionType,InitiatingProcessFileName, InitiatingProcessCommandLine,InitiatingProcessAccountDomain
