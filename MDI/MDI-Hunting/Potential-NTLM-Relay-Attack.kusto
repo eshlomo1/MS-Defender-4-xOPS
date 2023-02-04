@@ -1,4 +1,3 @@
-// MDI Under the Hood
 // Potential NTLM Relay Attack - Detects NTLM authentication traffic from machine accounts
 let DCS = dynamic(["dc1.lab.local","dc2.lab.local"]);
 DeviceLogonEvents
