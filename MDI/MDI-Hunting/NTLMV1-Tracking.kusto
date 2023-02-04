@@ -7,4 +7,3 @@ IdentityLogonEvents
 | extend NTLMV1 = tostring(AddData.IsNtlmV1)
 | extend Account = tostring((AddData).["ACTOR.ACCOUNT"])
 | where NTLMV1 == "True"
-| summarize count() by Account, AccountSid , DC = DestinationDeviceName
