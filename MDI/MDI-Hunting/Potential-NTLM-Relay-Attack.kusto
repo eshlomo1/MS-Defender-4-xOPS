@@ -1,4 +1,4 @@
-// Potential NTLM Relay Attack - Detects NTLM authentication traffic from machine accounts
+// Potential NTLM Relay Attack and detects NTLM auth traffic
 let DCS = dynamic(["dc1.lab.local","dc2.lab.local"]);
 DeviceLogonEvents
 | where Protocol == "NTLM"
