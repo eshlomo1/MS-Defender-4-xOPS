@@ -1,4 +1,4 @@
-// Search for Account enumeration reconnaissance on AD
+// Search for reconnaissance in AD
 let TimeRange = 1d;
 AlertInfo
 | where Timestamp > ago(TimeRange)
