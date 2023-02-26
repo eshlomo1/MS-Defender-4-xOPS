@@ -1,4 +1,4 @@
-// Search for Recon/Enum actions in AD
+// Search for Enum in AD
 let MalActions = pack_array('SAMR','LDAP');
 IdentityQueryEvents
 | where Application == @"Active Directory"
