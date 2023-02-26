@@ -1,4 +1,3 @@
-// WSL Execution
 // Detects Possible usage of WSL binary as a LOLBIN
 DeviceProcessEvents
 | where InitiatingProcessFileName endswith @'\wsl.exe' 
