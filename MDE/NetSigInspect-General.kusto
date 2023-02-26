@@ -1,4 +1,4 @@
-// General search for NetworkSignatureInspected for the last 15 days
+// General search for NetworkSignatureInspected  
 DeviceNetworkEvents 
 | where ActionType == "NetworkSignatureInspected"
 | where Timestamp > ago(1d)
