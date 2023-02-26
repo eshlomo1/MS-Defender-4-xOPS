@@ -3,4 +3,3 @@ IdentityLogonEvents
 | where ActionType == "LogonFailed"
 | where Application == "Active Directory"
 | where Protocol == "Kerberos"
-| summarize count() by FailureReason
