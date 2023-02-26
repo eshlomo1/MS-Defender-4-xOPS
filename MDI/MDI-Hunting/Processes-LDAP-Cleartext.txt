@@ -1,14 +1,12 @@
 // Processes who executed LDAP auth with cleartext for the last 31d
-// Combined the tables - IdentityLogonEvents & DeviceNetworkEvents
 IdentityLogonEvents
-| where TimeGenerated > ago(31d) 
+| where TimeGenerated > ago(1d) 
 | where LogonType == "LDAP cleartext" 
 | project LogonTime = TimeGenerated, DeviceName, Application, ActionType, LogonType 
 | join kind=inner (
 DeviceNetworkEvents
-| where TimeGenerated > ago(31d) | where ActionType == "ConnectionSuccess" 
+| where TimeGenerated > ago(1d) | where ActionType == "ConnectionSuccess" 
 | extend DeviceName = toupper(trim(@"..$",DeviceName))
 | where RemotePort == 389 
 | project NetworkConnectionTime = TimeGenerated, DeviceName, AccountName = InitiatingProcessAccountName, InitiatingProcessFileName, InitiatingProcessCommandLine ) on DeviceName 
 | where LogonTime - NetworkConnectionTime between (-2m .. 2m)
-| project Application, LogonType, ActionType, LogonTime, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine, AccountName
