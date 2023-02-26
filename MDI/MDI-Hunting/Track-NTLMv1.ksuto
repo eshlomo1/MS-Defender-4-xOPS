@@ -1,6 +1,6 @@
 // Track the use of NTLMv1
 IdentityLogonEvents
-| where Timestamp > ago (10d) // shows the activies in the recent days
+| where Timestamp > ago (1d) 
 | where Application contains "directory"
 | where Protocol == "Ntlm"
 | extend AddData = todynamic(AdditionalFields)
