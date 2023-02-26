@@ -1,7 +1,7 @@
-// Check weak cipher such as DES and RC4 with Kerberos authentication
+// Check weak cipher such with Kerberos authentication
 IdentityLogonEvents
+| where Timestamp >= ago(1d)
 | where Protocol == @"Kerberos"
 | extend ParsedFields=parse_json(AdditionalFields)
-| project Timestamp, ActionType, DeviceName, IPAddress, DestinationDeviceName, 
-          AccountName, AccountDomain, EncryptionType = tostring(ParsedFields.EncryptionType)
-| where EncryptionType == @"Rc4Hmac"
+| extend EncryptionType = tostring(ParsedFields.EncryptionType)
+| project Timestamp, ActionType, DeviceName, IPAddress, DestinationDeviceName,AccountName, AccountDomain,EncryptionType 
