@@ -7,3 +7,8 @@ DeviceProcessEvents
   or InitiatingProcessCommandLine contains ' --exec '
   or InitiatingProcessCommandLine contains ' --system '
   or InitiatingProcessCommandLine contains ' /mnt/c'
+  
+  
+  //Additionally, the query can contain the following command lines:
+  // :  - ' -e '  - ' --exec'  - ' --system'  - ' --shell-type '  - ' /mnt/c' # Path to mounted "C:\" partition - ' --user root'  - ' -u root
+
