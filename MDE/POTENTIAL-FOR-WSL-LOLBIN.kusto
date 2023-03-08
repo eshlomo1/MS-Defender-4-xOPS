@@ -1,0 +1,9 @@
+// This query you provided searches for events on the device’s event on certain conditions. 
+// Specifically, it filters events where the initiating process’s file name ends with “wsl.exe” 
+// and the initiating process’s command line contains one of the following substrings: ” -e”, ” –exec”, ” –system”, or ” /mnt/c”.
+DeviceProcessEvents
+| where InitiatingProcessFileName endswith @'\wsl.exe'
+  and InitiatingProcessCommandLine contains ' -e '
+  or InitiatingProcessCommandLine contains ' --exec '
+  or InitiatingProcessCommandLine contains ' --system '
+  or InitiatingProcessCommandLine contains ' /mnt/c'
