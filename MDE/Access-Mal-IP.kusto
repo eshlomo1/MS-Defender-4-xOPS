@@ -3,7 +3,7 @@
 let MalIPs = (externaldata(ip:string)
 [
 @"https://raw.githubusercontent.com/CriticalPathSecurity/Public-Intelligence-Feeds/master/compromised-ips.txt",
-@"https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/et_compromised.ipset"
+@"https://raw.githubusercontent.com/stamparm/ipsum/master/levels/5.txt"
 ]
 with(format="csv")
 | where ip matches regex "(^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)"
