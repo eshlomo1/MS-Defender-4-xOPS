@@ -1,14 +1,10 @@
 // Unknown User with failed logon from unknown device
+
 IdentityLogonEvents
-| where Timestamp > ago(3h)
+| where Timestamp > ago(1h)
 | where LogonType == "Failed logon"
-| where FailureReason == "UnknownUser"
-| extend TO_DEVICE = tostring(AdditionalFields.["TO.DEVICE"])
-
---------------------------------
-
-IdentityLogonEvents 
-| where Timestamp > ago(3h)
+| where FailureReason == "UnknownUser" 
 | where ActionType == "LogonFailed"
-| where FailureReason == "UnknownUser"
 | where AccountName !endswith "$"
+| extend TO_DEVICE = tostring(AdditionalFields.["TO.DEVICE"])
+| summarize count() by DeviceName, ActionType, LogonType, FailureReason, Protocol, AccountName, DestinationDeviceName
