@@ -1,4 +1,4 @@
-# Ransomware Simulator Tools 
+# Ransomware Simulator Tool 
  
 This script is intended to be used to test your defenses and backups against ransomware in a controlled environment. 
 You can encrypt fake data for your simulation, but you also have the option to decrypt the files with the same script if you need to.
