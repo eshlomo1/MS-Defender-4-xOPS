@@ -1,0 +1,76 @@
+union IdentityLogonEvents, IdentityQueryEvents, IdentityDirectoryEvents
+| where ActionType == "Device Operating System changed"
+and ActionType == "Directory Services replication"
+and OSPlatform contains "Windows Server"
+| extend ['Previous OS Version'] = tostring(AdditionalFields.["FROM Device Operating System"])
+| extend ['Current OS Version'] = tostring(AdditionalFields.["TO Device Operating System"])
+
+------------
+
+IdentityQueryEvents
+| where Timestamp >= ago(2h) | order by Timestamp
+| where ActionType in ("SAMR query","SamrQuerySuccess")
+| join kind=inner (
+IdentityDirectoryEvents
+| where Timestamp > ago(1d)
+) on AccountName
+| project Timestamp, ActionType, QueryType, QueryTarget, Protocol
+
+------------
+
+IdentityQueryEvents
+| where QueryTarget == "Schema Admins"
+//and ActionType != "LDAP query"
+
+------------
+
+let SensitiveGroupName = pack_array(
+'Account Operators',
+'Backup Operators',
+'Domain Admins',
+'Domain Controllers',
+'Administrators',
+'Enterprise Admins',
+'Group Policy Creator Owners',
+'Incoming Forest Trust Builders',
+'Network Configuration Operators',
+'Microsoft Exchange Servers',
+'Enterprise Read-only Domain Controllers',
+'Print Operators',
+'Schema Admins',
+'Read-only Domain Controllers',
+'Microsoft Exchange Servers',
+'Replicator',
+'Server Operators'
+);
+IdentityDirectoryEvents
+| where Timestamp >= ago(1d)
+| where Application == "Active Directory"
+| where ActionType == "Group Membership changed"
+| where DestinationDeviceName != ""
+| extend ToGroup = tostring(parse_json(AdditionalFields).["TO.GROUP"])
+| extend FromGroup = tostring(parse_json(AdditionalFields).["FROM.GROUP"])
+| extend Action = iff(isempty(ToGroup), "Remove", "Add")
+| extend GroupModified = iff(isempty(ToGroup), FromGroup, ToGroup)
+| extend Target_Group = tostring(parse_json(AdditionalFields).["TARGET_OBJECT.GROUP"])
+| where GroupModified in~ (SensitiveGroupName)
+
+------------
+
+IdentityDirectoryEvents
+| where Timestamp > ago(3h)
+| where ActionType in ("Account Supported Encryption Types changed","Device Account Created")
+| join kind=inner (
+IdentityQueryEvents
+| where Timestamp >= ago(1d) | order by Timestamp
+| where ActionType in ("SAMR query","SamrQuerySuccess")
+) on AccountDisplayName
+
+------------
+
+union IdentityDirectoryEvents
+| where Timestamp >= ago(1h) | order by Timestamp
+| where Application != @"Microsoft 365"
+| where ActionType in ("Account Delegation changed", "Account Path changed", "Credentials validation")
+//| extend TOAccountPath=parse_json(AdditionalFields)
+//| where TOAccountPath contains "OU=Domain Controllers"
