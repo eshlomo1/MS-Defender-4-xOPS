@@ -80,11 +80,52 @@ let SensitiveGroups = dynamic([
 'Server Operators'
 ]);
 IdentityDirectoryEvents
-| where TimeGenerated >= ago(31d)
-| where Application == "Active Directory"
+| where Timestamp >= ago(31d)
 | where ActionType == "Group Membership changed"
-| extend TO_GROUP_ = tostring(AdditionalFields.["TO.GROUP"])
-| where TO_GROUP_ has_any (SensitiveGroups)
+| where DestinationDeviceName != ""
+| extend ToGroup = tostring(parse_json(AdditionalFields).["TO.GROUP"])
+| extend FromGroup = tostring(parse_json(AdditionalFields).["FROM.GROUP"])
+| extend Action = iff(isempty(ToGroup), "Add", "Remove")
+| extend GroupModified = iff(isempty(ToGroup), FromGroup, ToGroup)
+| extend Target_Group = tostring(parse_json(AdditionalFields).["TARGET_OBJECT.GROUP"])
+| extend TARGET_ACCOUNT = tostring(AdditionalFields.["TARGET_OBJECT.ACCOUNT"])
+| where GroupModified has_any (SensitiveGroups)
+
+
+
+
+let SensitiveGroups = dynamic([
+'Account Operators',
+'Backup Operators',
+'Domain Admins',
+'Domain Controllers',
+'Administrators',
+'Enterprise Admins',
+'Group Policy Creator Owners',
+'Incoming Forest Trust Builders',
+'Network Configuration Operators',
+'Microsoft Exchange Servers',
+'Enterprise Read-only Domain Controllers',
+'Print Operators',
+'Schema Admins',
+'Read-only Domain Controllers',
+'Microsoft Exchange Servers',
+'Replicator',
+'Server Operators'
+]);
+IdentityDirectoryEvents
+| where Timestamp >= ago(31d)
+| where ActionType == "Group Membership changed"
+| extend ToGroup = tostring(parse_json(AdditionalFields).["TO.GROUP"])
+| extend FromGroup = tostring(parse_json(AdditionalFields).["FROM.GROUP"])
+| extend Action = iff(isempty(ToGroup), "Add", "Remove")
+| extend GroupModified = iff(isempty(ToGroup), FromGroup, ToGroup)
+| extend Target_Group = tostring(parse_json(AdditionalFields).["TARGET_OBJECT.GROUP"])
+| extend TARGET_ACCOUNT = tostring(AdditionalFields.["TARGET_OBJECT.ACCOUNT"])
+| where GroupModified has_any (SensitiveGroups)
+| where Target_Group != "Local Servers Admins"
+
+
 
 ------------
 
