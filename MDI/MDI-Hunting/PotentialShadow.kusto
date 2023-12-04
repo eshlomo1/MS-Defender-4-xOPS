@@ -16,6 +16,42 @@ IdentityDirectoryEvents
 ) on AccountName
 | project Timestamp, ActionType, QueryType, QueryTarget, Protocol
 
+
+Note: Additional query if you've got a FP results 
+
+let StrongGroups = dynamic ([
+'Account Operators',
+'Backup Operators',
+'Domain Admins',
+'Domain Controllers',
+'Administrators',
+'Enterprise Admins',
+'Group Policy Creator Owners',
+'Incoming Forest Trust Builders',
+'Network Configuration Operators',
+'Microsoft Exchange Servers',
+'Enterprise Read-only Domain Controllers',
+'Print Operators',
+'Schema Admins',
+'Read-only Domain Controllers',
+'Microsoft Exchange Servers',
+'Replicator',
+'Server Operators'
+]); 
+IdentityQueryEvents
+| where TimeGenerated >= ago(1d) | order by TimeGenerated
+| where ActionType in ("SAMR query","SamrQuerySuccess")
+| where QueryTarget has_any (StrongGroups)
+| join kind=inner (
+IdentityDirectoryEvents
+| where TimeGenerated > ago(1d)
+) on AccountName
+| where ActionType1 contains "Account Path changed"
+| extend Account_Path_ = tostring(parse_json(tostring(AdditionalFields1.["TO Account Path"])))
+| where Account_Path_ contains "OU=Domain Controllers"
+| project TimeGenerated, ActionType, QueryType, QueryTarget, Protocol
+
+
 ------------
 
 IdentityQueryEvents
