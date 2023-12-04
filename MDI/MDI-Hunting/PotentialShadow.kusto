@@ -60,7 +60,7 @@ IdentityQueryEvents
 
 ------------
 
-let SensitiveGroupName = pack_array(
+let SensitiveGroups = dynamic([
 'Account Operators',
 'Backup Operators',
 'Domain Admins',
@@ -78,18 +78,13 @@ let SensitiveGroupName = pack_array(
 'Microsoft Exchange Servers',
 'Replicator',
 'Server Operators'
-);
+]);
 IdentityDirectoryEvents
-| where Timestamp >= ago(1d)
+| where TimeGenerated >= ago(31d)
 | where Application == "Active Directory"
 | where ActionType == "Group Membership changed"
-| where DestinationDeviceName != ""
-| extend ToGroup = tostring(parse_json(AdditionalFields).["TO.GROUP"])
-| extend FromGroup = tostring(parse_json(AdditionalFields).["FROM.GROUP"])
-| extend Action = iff(isempty(ToGroup), "Remove", "Add")
-| extend GroupModified = iff(isempty(ToGroup), FromGroup, ToGroup)
-| extend Target_Group = tostring(parse_json(AdditionalFields).["TARGET_OBJECT.GROUP"])
-| where GroupModified in~ (SensitiveGroupName)
+| extend TO_GROUP_ = tostring(AdditionalFields.["TO.GROUP"])
+| where TO_GROUP_ has_any (SensitiveGroups)
 
 ------------
 
